@@ -1,0 +1,63 @@
+name: Metrics
+
+on:
+  # Refresh every day at 05:30 IST
+  schedule: [{ cron: "0 0 * * *" }]
+  # Lets you run it by hand from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lowlighter/metrics@latest
+        with:
+          # Personal access token (add it as a repository secret named METRICS_TOKEN)
+          token: ${{ secrets.METRICS_TOKEN }}
+          # Built-in token, used only to commit the generated image back to this repo
+          committer_token: ${{ secrets.GITHUB_TOKEN }}
+          user: Yatharthdahiyaa
+          filename: github-metrics.svg
+          template: classic
+          config_timezone: Asia/Kolkata
+
+          # Header: joined date, followers, repos, stars, forks, contribution bar, disk usage
+          base: header, activity, community, repositories, metadata
+
+          # "1.52m added, 379k removed" line in the header
+          plugin_lines: yes
+          plugin_lines_sections: base
+
+          # Commit activity per time of day / per day + language activity charts
+          plugin_habits: yes
+          plugin_habits_charts: yes
+          plugin_habits_facts: no
+          plugin_habits_trim: yes
+          plugin_habits_from: 200
+          plugin_habits_days: 14
+
+          # 3D contributions calendar with current streak and commits per day
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: half-year
+
+          # Most used languages bar
+          plugin_languages: yes
+          plugin_languages_limit: 8
+
+          # Technology icons, built from the topics of repos you've starred
+          plugin_topics: yes
+          plugin_topics_mode: icons
+          plugin_topics_limit: 0
+
+          # --- Optional extras from the reference image ---
+          # PageSpeed scores for your personal website:
+          # plugin_pagespeed: yes
+          # plugin_pagespeed_url: https://your-site.com
+          #
+          # Suggested tracks from a public Apple Music or Spotify playlist:
+          # plugin_music: yes
+          # plugin_music_mode: playlist
+          # plugin_music_playlist: https://embed.music.apple.com/...
